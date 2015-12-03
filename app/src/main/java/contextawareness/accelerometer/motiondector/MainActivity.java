@@ -44,9 +44,14 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         //Initializing arff variables
         atts = new FastVector();
+
+        atts.addElement(new Attribute("magnitude"));
+
+        /*
         atts.addElement(new Attribute("x"));
         atts.addElement(new Attribute("y"));
         atts.addElement(new Attribute("z"));
+        */
 
         data = new Instances("MyRelation",atts,0);
 
@@ -66,6 +71,22 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
 
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = event.values[0]; //X axis
+            float y = event.values[1]; //Y axis
+            float z = event.values[2]; //Z axis
+
+            // Euclidean force vector - gravity.
+            double vector = Math.sqrt(Math.pow(x,2) + Math.pow(y,2) + Math.pow(z,2)) - 9.82;
+
+            double[] values = new double[data.numAttributes()];
+            values[0] = vector;
+            data.add(new Instance(1.0, values));
+        }
+
+
+
+        /*
         // To get a real accelerometer measurement, contribution of the force of gravity must be removed from the accelerometer data
         float[] gravity = new float[3];
         final float alpha = (float)0.8;
@@ -101,6 +122,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
 
         }
+        */
     }
 
     @Override
