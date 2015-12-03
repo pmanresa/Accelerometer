@@ -55,12 +55,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     protected void onPause() {
         super.onPause();
-        senSensorManager.unregisterListener(this);
+        //senSensorManager.unregisterListener(this);
     }
 
     protected void onResume() {
         super.onResume();
-        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        //senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     double[] window1 = new double[128];
@@ -170,7 +170,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 root.mkdirs();
             }
 
-            File nFile = new File(root,"motion.txt");
+            File nFile = new File(root,"motion"+System.currentTimeMillis()+".txt");
             FileWriter fW = new FileWriter(nFile,true);
             BufferedWriter writer = new BufferedWriter(fW);
             writer.write(data.toString());
@@ -181,6 +181,8 @@ public class MainActivity extends Activity implements SensorEventListener {
             saver.setInstances(data);
             saver.setFile(new File("")); // Modify arff file saved destination to execute program
             saver.writeBatch();*/
+
+            senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         }catch (IOException e){
             Context context = getApplicationContext();
