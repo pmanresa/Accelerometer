@@ -66,8 +66,12 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         //senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    double[] window1 = new double[128];
-    double[] window2 = new double[128];
+    double[] window1acc = new double[128];
+    double[] window2acc = new double[128];
+    double[] window1mic = new double[128];
+    double[] window2mic = new double[128];
+    double[] window1gps = new double[128];
+    double[] window2gps = new double[128];
     int w1 = 0;
     int w2 = 0;
 
@@ -88,19 +92,20 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
 
 
             if(w1 < 64 && w2 == 0) {
-                window1[w1] = vector;
+                window1acc[w1] = vector;7
+                window1mic[w1] = medi
                 w1++;
             }
             else {
-                window1[w1] = vector;
-                window2[w2] = vector;
+                window1acc[w1] = vector;
+                window2acc[w2] = vector;
                 w1++;
                 w2++;
 
                 if(w1 >= 128) {
-                    double max = getMax(window1);
-                    double min = getMin(window1);
-                    double sde = getSampleStandardDeviation(window1);
+                    double max = getMax(window1acc);
+                    double min = getMin(window1acc);
+                    double sde = getSampleStandardDeviation(window1acc);
 
                     double[] values = new double[data.numAttributes()];
                     values[0] = max;
@@ -110,9 +115,9 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
                     w1 = 0;
                 }
                 if(w2 >= 128) {
-                    double max = getMax(window2);
-                    double min = getMin(window2);
-                    double sde = getSampleStandardDeviation(window2);
+                    double max = getMax(window2acc);
+                    double min = getMin(window2acc);
+                    double sde = getSampleStandardDeviation(window2acc);
 
                     double[] values = new double[data.numAttributes()];
                     values[0] = max;
