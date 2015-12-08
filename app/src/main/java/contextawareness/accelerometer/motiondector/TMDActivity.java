@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +29,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
+    private MediaRecorder mediaRecorder;
 
     private long            lastUpdate = 0;
 
@@ -39,18 +41,27 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmd);
 
-        Toast.makeText(this, "Started", Toast.LENGTH_SHORT).show();
         // Initializing sensorManager and accelerometer
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.start();
+
         //Initializing arff variables
         atts = new FastVector();
 
-        atts.addElement(new Attribute("max"));
-        atts.addElement(new Attribute("min"));
-        atts.addElement(new Attribute("sde"));
+        atts.addElement(new Attribute("accMax"));
+        atts.addElement(new Attribute("accMin"));
+        atts.addElement(new Attribute("accSde"));
+        atts.addElement(new Attribute("micMax"));
+        atts.addElement(new Attribute("micMin"));
+        atts.addElement(new Attribute("micSde"));
+        atts.addElement(new Attribute("speedMax"));
+        atts.addElement(new Attribute("speedMin"));
+        atts.addElement(new Attribute("speedSde"));
 
         data = new Instances("MyRelation",atts,0);
 
@@ -170,6 +181,9 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        mediaRecorder.stop();
+        mediaRecorder.release();
 
         try {
 
