@@ -1,15 +1,21 @@
 package contextawareness.accelerometer.motiondector;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -25,13 +31,14 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class TMDActivity extends AppCompatActivity implements SensorEventListener {
+public class TMDActivity extends AppCompatActivity implements SensorEventListener, LocationListener {
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
     private MediaRecorder mediaRecorder;
+    private LocationManager locationManager;
 
-    private long            lastUpdate = 0;
+    private long lastUpdate = 0;
 
     FastVector atts;
     Instances data;
@@ -49,6 +56,9 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.start();
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
         //Initializing arff variables
         atts = new FastVector();
@@ -173,6 +183,8 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
 
     }
 
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -211,4 +223,15 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         }
     }
 
+    @Override
+    public void onLocationChanged(Location location) { }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) { }
+
+    @Override
+    public void onProviderEnabled(String provider) { }
+
+    @Override
+    public void onProviderDisabled(String provider) { }
 }
