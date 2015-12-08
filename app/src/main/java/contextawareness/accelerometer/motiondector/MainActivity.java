@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
 
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         boolean headsetOn = audioManager.isWiredHeadsetOn();
+        //audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0); // Sets volume, works
 
         Intent intent = new Intent(this, TMDActivity.class);
         startActivity(intent);
