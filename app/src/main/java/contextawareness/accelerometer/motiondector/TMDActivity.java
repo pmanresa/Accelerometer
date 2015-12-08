@@ -115,13 +115,18 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
             if(w1 < 64 && w2 == 0) {
                 window1acc[w1] = vector;
                 window1mic[w1] = (double) mediaRecorder.getMaxAmplitude();
+                window1gps[w1] = (double) locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getSpeed();
                 w1++;
             }
             else {
                 window1acc[w1] = vector;
                 window2acc[w2] = vector;
-                window1mic[w1] = (double) mediaRecorder.getMaxAmplitude();
-                window2mic[w2] = (double) mediaRecorder.getMaxAmplitude();
+                double maxAmplitude = (double) mediaRecorder.getMaxAmplitude();
+                window1mic[w1] = maxAmplitude;
+                window2mic[w2] = maxAmplitude;
+                double speed = (double) locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getSpeed();
+                window1gps[w1] = speed;
+                window2gps[w2] = speed;
                 w1++;
                 w2++;
 
@@ -134,6 +139,10 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
                     double minMic = getMin(window1mic);
                     double sdeMic = getSampleStandardDeviation(window1mic);
 
+                    double maxGps = getMax(window1gps);
+                    double minGps = getMin(window1gps);
+                    double sdeGps = getSampleStandardDeviation(window1gps);
+
                     double[] values = new double[data.numAttributes()];
                     values[0] = maxAcc;
                     values[1] = minAcc;
@@ -141,6 +150,9 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
                     values[3] = maxMic;
                     values[4] = minMic;
                     values[5] = sdeMic;
+                    values[6] = maxGps;
+                    values[7] = minGps;
+                    values[8] = sdeGps;
                     data.add(new Instance(1.0, values));
                     w1 = 0;
                 }
@@ -153,6 +165,10 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
                     double minMic = getMin(window2mic);
                     double sdeMic = getSampleStandardDeviation(window2mic);
 
+                    double maxGps = getMax(window1gps);
+                    double minGps = getMin(window1gps);
+                    double sdeGps = getSampleStandardDeviation(window1gps);
+
                     double[] values = new double[data.numAttributes()];
                     values[0] = maxAcc;
                     values[1] = minAcc;
@@ -160,6 +176,9 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
                     values[3] = maxMic;
                     values[4] = minMic;
                     values[5] = sdeMic;
+                    values[6] = maxGps;
+                    values[7] = minGps;
+                    values[8] = sdeGps;
                     data.add(new Instance(1.0, values));
                     w2 = 0;
                 }
