@@ -103,37 +103,53 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
 
 
             if(w1 < 64 && w2 == 0) {
-                window1acc[w1] = vector;7
-                window1mic[w1] = medi
+                window1acc[w1] = vector;
+                window1mic[w1] = (double) mediaRecorder.getMaxAmplitude();
                 w1++;
             }
             else {
                 window1acc[w1] = vector;
                 window2acc[w2] = vector;
+                window1mic[w1] = (double) mediaRecorder.getMaxAmplitude();
+                window2mic[w2] = (double) mediaRecorder.getMaxAmplitude();
                 w1++;
                 w2++;
 
                 if(w1 >= 128) {
-                    double max = getMax(window1acc);
-                    double min = getMin(window1acc);
-                    double sde = getSampleStandardDeviation(window1acc);
+                    double maxAcc = getMax(window1acc);
+                    double minAcc = getMin(window1acc);
+                    double sdeAcc = getSampleStandardDeviation(window1acc);
+
+                    double maxMic = getMax(window1mic);
+                    double minMic = getMin(window1mic);
+                    double sdeMic = getSampleStandardDeviation(window1mic);
 
                     double[] values = new double[data.numAttributes()];
-                    values[0] = max;
-                    values[1] = min;
-                    values[2] = sde;
+                    values[0] = maxAcc;
+                    values[1] = minAcc;
+                    values[2] = sdeAcc;
+                    values[3] = maxMic;
+                    values[4] = minMic;
+                    values[5] = sdeMic;
                     data.add(new Instance(1.0, values));
                     w1 = 0;
                 }
                 if(w2 >= 128) {
-                    double max = getMax(window2acc);
-                    double min = getMin(window2acc);
-                    double sde = getSampleStandardDeviation(window2acc);
+                    double maxAcc = getMax(window2acc);
+                    double minAcc = getMin(window2acc);
+                    double sdeAcc = getSampleStandardDeviation(window2acc);
+
+                    double maxMic = getMax(window2mic);
+                    double minMic = getMin(window2mic);
+                    double sdeMic = getSampleStandardDeviation(window2mic);
 
                     double[] values = new double[data.numAttributes()];
-                    values[0] = max;
-                    values[1] = min;
-                    values[2] = sde;
+                    values[0] = maxAcc;
+                    values[1] = minAcc;
+                    values[2] = sdeAcc;
+                    values[3] = maxMic;
+                    values[4] = minMic;
+                    values[5] = sdeMic;
                     data.add(new Instance(1.0, values));
                     w2 = 0;
                 }
