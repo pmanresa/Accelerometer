@@ -1,8 +1,7 @@
 package contextawareness.accelerometer.motiondector;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
+import android.app.Service;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,26 +11,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.Toast;
+import android.os.IBinder;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class TMDActivity extends AppCompatActivity implements SensorEventListener, LocationListener {
+public class SensorService extends Service implements SensorEventListener, LocationListener {
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
@@ -42,58 +28,6 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
 
     FastVector atts;
     Instances data;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tmd);
-
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setOutputFile("/dev/null");
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaRecorder.start();
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
-        // Initializing sensorManager and accelerometer
-        senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-        //Initializing arff variables
-        atts = new FastVector();
-
-        atts.addElement(new Attribute("accMax"));
-        atts.addElement(new Attribute("accMin"));
-        atts.addElement(new Attribute("accSde"));
-        atts.addElement(new Attribute("micMax"));
-        atts.addElement(new Attribute("micMin"));
-        atts.addElement(new Attribute("micSde"));
-        atts.addElement(new Attribute("speedMax"));
-        atts.addElement(new Attribute("speedMin"));
-        atts.addElement(new Attribute("speedSde"));
-
-        data = new Instances("MyRelation",atts,0);
-
-    }
-
-    protected void onPause() {
-        super.onPause();
-        //senSensorManager.unregisterListener(this);
-    }
-
-    protected void onResume() {
-        super.onResume();
-        //senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-    }
 
     double[] window1acc = new double[128];
     double[] window2acc = new double[128];
@@ -232,43 +166,13 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
     }
 
 
+    public SensorService() {
+    }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        mediaRecorder.stop();
-        mediaRecorder.release();
-
-        try {
-
-            File root = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "MotionDetector");
-            if(!root.exists()) {
-                root.mkdirs();
-            }
-
-            File nFile = new File(root,"motion"+System.currentTimeMillis()+".txt");
-            FileWriter fW = new FileWriter(nFile,true);
-            BufferedWriter writer = new BufferedWriter(fW);
-            writer.write(data.toString());
-            writer.flush();
-            writer.close();
-
-            /*ArffSaver saver = new ArffSaver();
-            saver.setInstances(data);
-            saver.setFile(new File("")); // Modify arff file saved destination to execute program
-            saver.writeBatch();*/
-
-            senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-        }catch (IOException e){
-            Context context = getApplicationContext();
-            CharSequence text = "Data saved unsuccessfully. Check arff file destination.";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        }
+    public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
