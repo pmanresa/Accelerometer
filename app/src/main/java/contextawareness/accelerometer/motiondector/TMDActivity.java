@@ -2,6 +2,7 @@ package contextawareness.accelerometer.motiondector;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -48,6 +50,27 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tmd);
 
+        Button startButton = (Button) findViewById(R.id.startServiceButton);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(TMDActivity.this, SensorService.class);
+                serviceIntent.putExtra(SensorService.SERVICE_START_STOP_COMMAND, SensorService.SERVICE_START);
+                startService(serviceIntent);
+            }
+        });
+
+        Button stopButton = (Button) findViewById(R.id.stopServiceButton);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(TMDActivity.this, SensorService.class);
+                serviceIntent.putExtra(SensorService.SERVICE_START_STOP_COMMAND, SensorService.SERVICE_STOP);
+                startService(serviceIntent);
+            }
+        });
+
+        /*
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -82,7 +105,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         atts.addElement(new Attribute("speedSde"));
 
         data = new Instances("MyRelation",atts,0);
-
+        */
     }
 
     protected void onPause() {
@@ -237,6 +260,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
     protected void onDestroy() {
         super.onDestroy();
 
+        /*
         mediaRecorder.stop();
         mediaRecorder.release();
 
@@ -258,6 +282,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
             saver.setInstances(data);
             saver.setFile(new File("")); // Modify arff file saved destination to execute program
             saver.writeBatch();*/
+            /*
 
             senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -269,6 +294,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }
+        */
     }
 
     @Override

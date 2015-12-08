@@ -32,11 +32,16 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        boolean headsetOn = audioManager.isWiredHeadsetOn();
+        //boolean headsetOn = audioManager.isWiredHeadsetOn();
+        //int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        //Toast.makeText(this, Integer.toString(volume), Toast.LENGTH_SHORT).show();
         //audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0); // Sets volume, works
 
         Intent intent = new Intent(this, TMDActivity.class);
         startActivity(intent);
+
+        //Intent serviceIntent = new Intent(this, SensorService.class);
+        //startService(serviceIntent);
     }
 
     @Override
@@ -52,5 +57,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Intent serviceIntent = new Intent(this, SensorService.class);
+        stopService(serviceIntent);
     }
 }
