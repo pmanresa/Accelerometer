@@ -38,6 +38,8 @@ public class SensorService extends Service implements SensorEventListener, Locat
     int w1 = 0;
     int w2 = 0;
 
+    //// ddddd
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
