@@ -10,6 +10,10 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -31,14 +35,43 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        //boolean headsetOn = audioManager.isWiredHeadsetOn();
-        //int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        //Toast.makeText(this, Integer.toString(volume), Toast.LENGTH_SHORT).show();
-        //audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0); // Sets volume, works
+        final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        boolean headsetOn = audioManager.isWiredHeadsetOn();
+        int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        final int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-        Intent intent = new Intent(this, TMDActivity.class);
-        startActivity(intent);
+        RadioButton headphoneView = (RadioButton) findViewById(R.id.headphoneDetectedView);
+        if (headsetOn == true) {
+            headphoneView.toggle();
+        }
+
+        final SeekBar volumeBar = (SeekBar) findViewById(R.id.volumeSlider);
+        volumeBar.setMax(maxVolume);
+        volumeBar.setProgress(volume);
+        volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+
+        Button tmdButton = (Button) findViewById(R.id.tmdButton);
+        tmdButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TMDActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         //Intent serviceIntent = new Intent(this, SensorService.class);
         //startService(serviceIntent);
