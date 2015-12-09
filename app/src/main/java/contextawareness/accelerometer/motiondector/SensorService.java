@@ -28,6 +28,8 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.util.Arrays;
+
 public class SensorService extends Service implements SensorEventListener, LocationListener {
 
     public static final String SERVICE_START_STOP_COMMAND = "SERVICE_START_STOP_COMMAND";
@@ -85,12 +87,18 @@ public class SensorService extends Service implements SensorEventListener, Locat
             atts.addElement(new Attribute("accMax"));
             atts.addElement(new Attribute("accMin"));
             atts.addElement(new Attribute("accSde"));
+            atts.addElement(new Attribute("accMean"));
+            atts.addElement(new Attribute("accMedian"));
             atts.addElement(new Attribute("micMax"));
             atts.addElement(new Attribute("micMin"));
             atts.addElement(new Attribute("micSde"));
+            atts.addElement(new Attribute("micMean"));
+            atts.addElement(new Attribute("micMedian"));
             atts.addElement(new Attribute("speedMax"));
             atts.addElement(new Attribute("speedMin"));
             atts.addElement(new Attribute("speedSde"));
+            atts.addElement(new Attribute("speedMean"));
+            atts.addElement(new Attribute("speedMedian"));
 
             data = new Instances("MyRelation", atts, 0);
 
@@ -188,25 +196,37 @@ public class SensorService extends Service implements SensorEventListener, Locat
                     double maxAcc = getMax(window1acc);
                     double minAcc = getMin(window1acc);
                     double sdeAcc = getSampleStandardDeviation(window1acc);
+                    double meanAcc = getMean(window1acc);
+                    double medianAcc = getMedian(window1acc);
 
                     double maxMic = getMax(window1mic);
                     double minMic = getMin(window1mic);
                     double sdeMic = getSampleStandardDeviation(window1mic);
+                    double meanMic = getMean(window1mic);
+                    double medianMic = getMedian(window1mic);
 
                     double maxGps = getMax(window1gps);
                     double minGps = getMin(window1gps);
                     double sdeGps = getSampleStandardDeviation(window1gps);
+                    double meanGps = getMean(window1gps);
+                    double medianGps = getMedian(window1gps);
 
                     double[] values = new double[data.numAttributes()];
                     values[0] = maxAcc;
                     values[1] = minAcc;
                     values[2] = sdeAcc;
-                    values[3] = maxMic;
-                    values[4] = minMic;
-                    values[5] = sdeMic;
-                    values[6] = maxGps;
-                    values[7] = minGps;
-                    values[8] = sdeGps;
+                    values[3] = meanAcc;
+                    values[4] = medianAcc;
+                    values[5] = maxMic;
+                    values[6] = minMic;
+                    values[7] = sdeMic;
+                    values[8] = meanMic;
+                    values[9] = medianMic;
+                    values[10] = maxGps;
+                    values[11] = minGps;
+                    values[12] = sdeGps;
+                    values[13] = meanGps;
+                    values[14] = medianGps;
                     data.add(new Instance(1.0, values));
                     w1 = 0;
                 }
@@ -214,25 +234,37 @@ public class SensorService extends Service implements SensorEventListener, Locat
                     double maxAcc = getMax(window2acc);
                     double minAcc = getMin(window2acc);
                     double sdeAcc = getSampleStandardDeviation(window2acc);
+                    double meanAcc = getMean(window2acc);
+                    double medianAcc = getMedian(window2acc);
 
                     double maxMic = getMax(window2mic);
                     double minMic = getMin(window2mic);
                     double sdeMic = getSampleStandardDeviation(window2mic);
+                    double meanMic = getMean(window2mic);
+                    double medianMic = getMedian(window2mic);
 
-                    double maxGps = getMax(window1gps);
-                    double minGps = getMin(window1gps);
-                    double sdeGps = getSampleStandardDeviation(window1gps);
+                    double maxGps = getMax(window2gps);
+                    double minGps = getMin(window2gps);
+                    double sdeGps = getSampleStandardDeviation(window2gps);
+                    double meanGps = getMean(window2gps);
+                    double medianGps = getMedian(window2gps);
 
                     double[] values = new double[data.numAttributes()];
                     values[0] = maxAcc;
                     values[1] = minAcc;
                     values[2] = sdeAcc;
-                    values[3] = maxMic;
-                    values[4] = minMic;
-                    values[5] = sdeMic;
-                    values[6] = maxGps;
-                    values[7] = minGps;
-                    values[8] = sdeGps;
+                    values[3] = meanAcc;
+                    values[4] = medianAcc;
+                    values[5] = maxMic;
+                    values[6] = minMic;
+                    values[7] = sdeMic;
+                    values[8] = meanMic;
+                    values[9] = medianMic;
+                    values[10] = maxGps;
+                    values[11] = minGps;
+                    values[12] = sdeGps;
+                    values[13] = meanGps;
+                    values[14] = medianGps;
                     data.add(new Instance(1.0, values));
                     w2 = 0;
                 }
@@ -270,6 +302,19 @@ public class SensorService extends Service implements SensorEventListener, Locat
         // as opposed to the population standard deviation which is sum / N.
         double sde = Math.sqrt(sum);
         return sde;
+    }
+
+    public double getMean(double[] a) {
+        int ret = 0;
+        for(double d : a) {
+            ret += d;
+        }
+        return ret;
+    }
+
+    public double getMedian(double[] a) {
+        Arrays.sort(a);
+        return a[63];
     }
 
     @Override
