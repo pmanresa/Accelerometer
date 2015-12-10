@@ -26,6 +26,7 @@
             android:id="@+id/headphoneLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:text="Headphones connected:"/>
 
         <RadioButton
@@ -40,6 +41,7 @@
             android:id="@+id/volumeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_below="@id/headphoneDetectedView"
             android:text="Media volume:"/>
 
@@ -50,13 +52,58 @@
             android:layout_margin="10dp"
             android:layout_below="@id/volumeLabel"/>
 
+        <TextView
+            android:id="@+id/walkingVolumeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/volumeSlider"
+            android:text="Walking volume:"/>
+
+        <SeekBar
+            android:id="@+id/walkingVolumeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/walkingVolumeText"/>
+
+        <TextView
+            android:id="@+id/bikingVolumeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/walkingVolumeSlider"
+            android:text="Biking volume:"/>
+
+        <SeekBar
+            android:id="@+id/bikingVolumeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/bikingVolumeText"/>
+
+        <TextView
+            android:id="@+id/busVolumeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/bikingVolumeSlider"
+            android:text="Bus volume:"/>
+
+        <SeekBar
+            android:id="@+id/busVolumeSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_below="@id/busVolumeText"/>
+
         <Button
             android:id="@+id/tmdButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:text="Acc. logger"/>
+            android:text="Sensor logger"/>
 
     </RelativeLayout>
 
