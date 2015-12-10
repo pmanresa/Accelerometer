@@ -1,8 +1,10 @@
 package contextawareness.accelerometer.motiondector;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -40,7 +42,7 @@ public class MainActivity extends Activity {
         int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         final int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-        RadioButton headphoneView = (RadioButton) findViewById(R.id.headphoneDetectedView);
+        final RadioButton headphoneView = (RadioButton) findViewById(R.id.headphoneDetectedView);
         if (headsetOn == true) {
             headphoneView.toggle();
         }
@@ -56,10 +58,12 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         Button tmdButton = (Button) findViewById(R.id.tmdButton);
@@ -71,7 +75,20 @@ public class MainActivity extends Activity {
             }
         });
 
-
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (audioManager.isWiredHeadsetOn()) {
+                    headphoneView.setChecked(true);
+                    //TODO: Start TMD classifier service
+                } else {
+                    headphoneView.setChecked(false);
+                    //TODO: Stop TMD classifier service
+                }
+            }
+        };
+        registerReceiver(receiver, intentFilter);
 
         //Intent serviceIntent = new Intent(this, SensorService.class);
         //startService(serviceIntent);
