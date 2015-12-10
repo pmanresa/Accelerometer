@@ -63,6 +63,33 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
 
         if (command == SERVICE_START) {
 
+            atts = new FastVector();
+
+            atts.addElement(new Attribute("accMax"));
+            atts.addElement(new Attribute("accMin"));
+            atts.addElement(new Attribute("accSde"));
+            atts.addElement(new Attribute("accMean"));
+            atts.addElement(new Attribute("accMedian"));
+            atts.addElement(new Attribute("micMax"));
+            atts.addElement(new Attribute("micMin"));
+            atts.addElement(new Attribute("micSde"));
+            atts.addElement(new Attribute("micMean"));
+            atts.addElement(new Attribute("micMedian"));
+            atts.addElement(new Attribute("speedMax"));
+            atts.addElement(new Attribute("speedMin"));
+            atts.addElement(new Attribute("speedSde"));
+            atts.addElement(new Attribute("speedMean"));
+            atts.addElement(new Attribute("speedMedian"));
+
+            FastVector classVector = new FastVector(3);
+            classVector.addElement("Walking");
+            classVector.addElement("Bus");
+            classVector.addElement("Biking");
+            Attribute ClassAttribute = new Attribute("theClass", classVector);
+
+            atts.addElement(ClassAttribute);
+
+
             try{
                 aM = this.getAssets();
                 ObjectInputStream ois = new ObjectInputStream(aM.open(filepath + filename));
@@ -93,26 +120,6 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
             senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-            //Initializing arff variables
-            atts = new FastVector();
-
-            atts.addElement(new Attribute("accMax"));
-            atts.addElement(new Attribute("accMin"));
-            atts.addElement(new Attribute("accSde"));
-            atts.addElement(new Attribute("accMean"));
-            atts.addElement(new Attribute("accMedian"));
-            atts.addElement(new Attribute("micMax"));
-            atts.addElement(new Attribute("micMin"));
-            atts.addElement(new Attribute("micSde"));
-            atts.addElement(new Attribute("micMean"));
-            atts.addElement(new Attribute("micMedian"));
-            atts.addElement(new Attribute("speedMax"));
-            atts.addElement(new Attribute("speedMin"));
-            atts.addElement(new Attribute("speedSde"));
-            atts.addElement(new Attribute("speedMean"));
-            atts.addElement(new Attribute("speedMedian"));
-
-            data = new Instances("MyRelation", atts, 0);
 
         } else if (command == SERVICE_STOP) {
             mediaRecorder.stop();
@@ -194,7 +201,15 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                     values[12] = sdeGps;
                     values[13] = meanGps;
                     values[14] = medianGps;
-                    data.add(new Instance(1.0, values));
+                    Instance instance = new Instance(1.0, values);
+                    instance.setClassValue(instance.numAttributes()-1);
+                    try {
+                        double value = classifier.classifyInstance(instance);
+                        String className = instance.classAttribute().value((int)value);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     w1 = 0;
                 }
                 if(w2 >= 128) {
@@ -232,7 +247,15 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                     values[12] = sdeGps;
                     values[13] = meanGps;
                     values[14] = medianGps;
-                    data.add(new Instance(1.0, values));
+                    Instance instance = new Instance(1.0, values);
+                    instance.setClassValue(instance.numAttributes()-1);
+                    try {
+                        double value = classifier.classifyInstance(instance);
+                        String className = instance.classAttribute().value((int)value);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     w2 = 0;
                 }
             }
