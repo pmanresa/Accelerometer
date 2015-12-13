@@ -28,8 +28,8 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class ClassifyService extends Service implements SensorEventListener, LocationListener {
-
+public abstract class ClassifyService extends Service implements SensorEventListener, LocationListener {
+/*
     public static final String SERVICE_START_STOP_COMMAND = "SERVICE_START_STOP_COMMAND";
     public static final int SERVICE_START = 1;
     public static final int SERVICE_STOP = 2;
@@ -329,4 +329,5 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
 
     @Override
     public void onProviderDisabled(String provider) { }
+*/
 }
