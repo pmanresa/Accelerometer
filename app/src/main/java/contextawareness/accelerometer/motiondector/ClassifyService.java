@@ -352,17 +352,23 @@ public abstract class ClassifyService extends Service implements SensorEventList
 
     private void setVolume(String className, double meanMic) {
         String volumeKey;
+        boolean wind = false;
         if ("Walking".equals(className)) {
             volumeKey = MainActivity.KEY_PREF_WALK_VOLUME;
+            wind = true;
         } else if ("Bus".equals(className)) {
             volumeKey = MainActivity.KEY_PREF_BUS_VOLUME;
         } else if ("Biking".equals(className)) {
             volumeKey = MainActivity.KEY_PREF_BIKE_VOLUME;
+            wind = true;
         } else {
             return;
         }
         int volume = getVolumePreference(volumeKey);
         // TODO: use mic and wind
+        if(wind) {
+            // Take into account the wind
+        }
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,volume,0);
 
