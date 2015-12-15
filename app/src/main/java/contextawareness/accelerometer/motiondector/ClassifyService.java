@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -364,6 +365,11 @@ public abstract class ClassifyService extends Service implements SensorEventList
         // TODO: use mic and wind
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,volume,0);
+
+        // Send broadcast to main with the classname
+        Intent newIntent = new Intent("tmd");
+        newIntent.putExtra("tmd",className);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(newIntent);
     }
 
 }

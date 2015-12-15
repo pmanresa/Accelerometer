@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -37,6 +38,13 @@ public class MainActivity extends Activity {
     public static final String KEY_PREF_WALK_VOLUME = "KEY_PREF_WALK_VOLUME";
     public static final String KEY_PREF_BIKE_VOLUME = "KEY_PREF_BIKE_VOLUME";
     public static final String KEY_PREF_BUS_VOLUME = "KEY_PREF_BUS_VOLUME";
+
+    private BroadcastReceiver localReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String className = intent.getStringExtra("tmd");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,18 +168,22 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(localReciever);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(localReciever,
+                new IntentFilter("tmd"));
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(localReciever);
         Intent serviceIntent = new Intent(this, SensorService.class);
         stopService(serviceIntent);
+        super.onDestroy();
     }
 }
