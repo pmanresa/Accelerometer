@@ -92,7 +92,7 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
 
             try{
                 aM = this.getAssets();
-                ObjectInputStream ois = new ObjectInputStream(aM.open(filepath + filename));
+                ObjectInputStream ois = new ObjectInputStream(aM.open("classifier"));
                 classifier = (J48) ois.readObject();
                 ois.close();
             }
