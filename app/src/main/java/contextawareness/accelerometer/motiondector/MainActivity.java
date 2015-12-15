@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -43,6 +44,8 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String className = intent.getStringExtra("tmd");
+            TextView tmView = (TextView) findViewById(R.id.tmView);
+            tmView.setText(className);
         }
     };
 
