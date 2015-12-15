@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,9 +13,11 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -27,6 +30,7 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.gui.Main;
 
 public abstract class ClassifyService extends Service implements SensorEventListener, LocationListener {
 
@@ -205,7 +209,8 @@ public abstract class ClassifyService extends Service implements SensorEventList
                     instance.setClassValue(instance.numAttributes()-1);
                     try {
                         double value = classifier.classifyInstance(instance);
-                        String className = instance.classAttribute().value((int)value);
+                        String className = instance.classAttribute().value((int) value);
+                        setVolume(className, meanMic);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -252,6 +257,7 @@ public abstract class ClassifyService extends Service implements SensorEventList
                     try {
                         double value = classifier.classifyInstance(instance);
                         String className = instance.classAttribute().value((int)value);
+                        setVolume(className, meanMic);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -329,5 +335,35 @@ public abstract class ClassifyService extends Service implements SensorEventList
 
     @Override
     public void onProviderDisabled(String provider) { }
+
+    /**
+     * Returns volume for given transport mode. tm options are:
+     * MainActivity.KEY_PREF_WALK_VOLUME
+     * MainActivity.KEY_PREF_BIKE_VOLUME
+     * MainActivity.KEY_PREF_BUS_VOLUME
+     * @param tm
+     * @return
+     */
+    private int getVolumePreference(String tm) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPreferences.getInt(tm, 2);
+    }
+
+    private void setVolume(String className, double meanMic) {
+        String volumeKey;
+        if ("Walking".equals(className)) {
+            volumeKey = MainActivity.KEY_PREF_WALK_VOLUME;
+        } else if ("Bus".equals(className)) {
+            volumeKey = MainActivity.KEY_PREF_BUS_VOLUME;
+        } else if ("Biking".equals(className)) {
+            volumeKey = MainActivity.KEY_PREF_BIKE_VOLUME;
+        } else {
+            return;
+        }
+        int volume = getVolumePreference(volumeKey);
+        // TODO: use mic and wind
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,volume,0);
+    }
 
 }
