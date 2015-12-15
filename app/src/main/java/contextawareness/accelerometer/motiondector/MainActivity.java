@@ -167,9 +167,9 @@ public class MainActivity extends Activity {
         };
         registerReceiver(receiver, intentFilter);
 
-        Intent serviceIntent = new Intent(this, ClassifyService.class);
-        serviceIntent.putExtra(ClassifyService.SERVICE_START_STOP_COMMAND, ClassifyService.SERVICE_START);
-        startService(serviceIntent);
+        //Intent serviceIntent = new Intent(this, ClassifyService.class);
+        //serviceIntent.putExtra(ClassifyService.SERVICE_START_STOP_COMMAND, ClassifyService.SERVICE_START);
+        //startService(serviceIntent);
     }
 
     @Override
