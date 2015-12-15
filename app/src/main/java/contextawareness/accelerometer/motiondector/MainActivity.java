@@ -134,10 +134,12 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
 
@@ -165,8 +167,9 @@ public class MainActivity extends Activity {
         };
         registerReceiver(receiver, intentFilter);
 
-        //Intent serviceIntent = new Intent(this, SensorService.class);
-        //startService(serviceIntent);
+        Intent serviceIntent = new Intent(this, ClassifyService.class);
+        serviceIntent.putExtra(ClassifyService.SERVICE_START_STOP_COMMAND, ClassifyService.SERVICE_START);
+        startService(serviceIntent);
     }
 
     @Override

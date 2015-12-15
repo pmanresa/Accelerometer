@@ -33,7 +33,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.gui.Main;
 
-public abstract class ClassifyService extends Service implements SensorEventListener, LocationListener {
+public class ClassifyService extends Service implements SensorEventListener, LocationListener {
 
     public static final String SERVICE_START_STOP_COMMAND = "SERVICE_START_STOP_COMMAND";
     public static final int SERVICE_START = 1;
