@@ -35,6 +35,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
     public static final String SERVICE_START_STOP_COMMAND = "SERVICE_START_STOP_COMMAND";
     public static final int SERVICE_START = 1;
     public static final int SERVICE_STOP = 2;
+    private boolean running = false;
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
@@ -60,7 +61,7 @@ public class SensorService extends Service implements SensorEventListener, Locat
 
         int command = intent.getExtras().getInt(SERVICE_START_STOP_COMMAND);
 
-        if (command == SERVICE_START) {
+        if (command == SERVICE_START && !running) {
             mediaRecorder = new MediaRecorder();
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -109,10 +110,13 @@ public class SensorService extends Service implements SensorEventListener, Locat
                     .build();
             startForeground(42, notification);
 
+            running = true;
+
             Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
-        } else if (command == SERVICE_STOP) {
+        } else if (command == SERVICE_STOP && running) {
             stopForeground(true);
             shutdown();
+            running = false;
         }
 
         return START_NOT_STICKY;
@@ -144,7 +148,8 @@ public class SensorService extends Service implements SensorEventListener, Locat
             saver.setFile(new File("")); // Modify arff file saved destination to execute program
             saver.writeBatch();*/
 
-            senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            //senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            senSensorManager.unregisterListener(this);
 
         } catch (IOException e){
             Context context = getApplicationContext();
