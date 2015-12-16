@@ -152,6 +152,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        // TODO: Remove, unused
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
@@ -165,7 +166,7 @@ public class MainActivity extends Activity {
                 }
             }
         };
-        registerReceiver(receiver, intentFilter);
+        //registerReceiver(receiver, intentFilter);
 
         //Intent serviceIntent = new Intent(this, ClassifyService.class);
         //serviceIntent.putExtra(ClassifyService.SERVICE_START_STOP_COMMAND, ClassifyService.SERVICE_START);
@@ -181,15 +182,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(localReciever,
-                new IntentFilter("tmd"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(localReciever, new IntentFilter("tmd"));
     }
 
     @Override
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(localReciever);
-        Intent serviceIntent = new Intent(this, SensorService.class);
-        stopService(serviceIntent);
+        //Intent serviceIntent = new Intent(this, SensorService.class);
+        //stopService(serviceIntent);
         super.onDestroy();
     }
 }

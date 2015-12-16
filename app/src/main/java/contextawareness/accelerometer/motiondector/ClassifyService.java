@@ -38,6 +38,7 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
     public static final String SERVICE_START_STOP_COMMAND = "SERVICE_START_STOP_COMMAND";
     public static final int SERVICE_START = 1;
     public static final int SERVICE_STOP = 2;
+    private boolean running = false;
 
     J48 classifier;
     AssetManager aM;
@@ -66,7 +67,7 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
 
         int command = intent.getExtras().getInt(SERVICE_START_STOP_COMMAND);
 
-        if (command == SERVICE_START) {
+        if (command == SERVICE_START && !running) {
 
             atts = new FastVector();
 
@@ -125,10 +126,22 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
             senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("ClassifyService")
+                    .setContentText("Running")
+                    .build();
+            startForeground(40, notification);
 
-        } else if (command == SERVICE_STOP) {
+            running = true;
+
+        } else if (command == SERVICE_STOP && running) {
+            stopForeground(true);
             mediaRecorder.stop();
             mediaRecorder.release();
+            senSensorManager.unregisterListener(this);
+            stopSelf();
+            running = false;
         }
 
         return START_NOT_STICKY;

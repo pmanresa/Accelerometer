@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_centerHorizontal="true"
-            android:text="Start service"/>
+            android:text="Start Logging"/>
 
         <Button
             android:id="@+id/stopServiceButton"
@@ -44,7 +44,26 @@
             android:layout_margin="10dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/startServiceButton"
-            android:text="Stop service"/>
+            android:text="Stop Logging"/>
+
+        <Button
+            android:id="@+id/startClassifierButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="75dp"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/stopServiceButton"
+            android:text="Start Classifier"/>
+
+        <Button
+            android:id="@+id/stopClassifierButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/startClassifierButton"
+            android:text="Stop Classifier"/>
 
     </RelativeLayout>
 

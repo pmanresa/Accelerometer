@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:text="Sensor logger"/>
+            android:text="Start/Stop Services"/>
 
         <TextView
             android:id="@+id/tmView"

@@ -33,9 +33,9 @@ import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class TMDActivity extends AppCompatActivity implements SensorEventListener, LocationListener {
+public class TMDActivity extends AppCompatActivity {
 
-    private SensorManager senSensorManager;
+    /*private SensorManager senSensorManager;
     private Sensor senAccelerometer;
     private MediaRecorder mediaRecorder;
     private LocationManager locationManager;
@@ -43,7 +43,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
     private long lastUpdate = 0;
 
     FastVector atts;
-    Instances data;
+    Instances data;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +66,26 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
             public void onClick(View v) {
                 Intent serviceIntent = new Intent(TMDActivity.this, SensorService.class);
                 serviceIntent.putExtra(SensorService.SERVICE_START_STOP_COMMAND, SensorService.SERVICE_STOP);
+                startService(serviceIntent);
+            }
+        });
+
+        Button startClassifierButton = (Button) findViewById(R.id.startClassifierButton);
+        startClassifierButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(TMDActivity.this, ClassifyService.class);
+                serviceIntent.putExtra(SensorService.SERVICE_START_STOP_COMMAND, ClassifyService.SERVICE_START);
+                startService(serviceIntent);
+            }
+        });
+
+        Button stopClassifierButton = (Button) findViewById(R.id.stopClassifierButton);
+        stopClassifierButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serviceIntent = new Intent(TMDActivity.this, ClassifyService.class);
+                serviceIntent.putExtra(SensorService.SERVICE_START_STOP_COMMAND, ClassifyService.SERVICE_STOP);
                 startService(serviceIntent);
             }
         });
@@ -118,16 +138,16 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         //senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    double[] window1acc = new double[128];
+    /*double[] window1acc = new double[128];
     double[] window2acc = new double[128];
     double[] window1mic = new double[128];
     double[] window2mic = new double[128];
     double[] window1gps = new double[128];
     double[] window2gps = new double[128];
     int w1 = 0;
-    int w2 = 0;
+    int w2 = 0;*/
 
-    @Override
+    /*@Override
     public void onSensorChanged(SensorEvent event) {
         Sensor mySensor = event.sensor;
 
@@ -253,7 +273,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
+*/
 
 
     @Override
@@ -296,7 +316,7 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
         }
         */
     }
-
+/*
     @Override
     public void onLocationChanged(Location location) { }
 
@@ -308,4 +328,5 @@ public class TMDActivity extends AppCompatActivity implements SensorEventListene
 
     @Override
     public void onProviderDisabled(String provider) { }
+    */
 }
