@@ -42,8 +42,6 @@ public class SensorService extends Service implements SensorEventListener, Locat
     private MediaRecorder mediaRecorder;
     private LocationManager locationManager;
 
-    private long lastUpdate = 0;
-
     FastVector atts;
     Instances data;
 
@@ -350,7 +348,6 @@ public class SensorService extends Service implements SensorEventListener, Locat
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

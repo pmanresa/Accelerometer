@@ -18,9 +18,9 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -31,7 +31,6 @@ import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.gui.Main;
 
 public class ClassifyService extends Service implements SensorEventListener, LocationListener {
 
@@ -50,9 +49,9 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
 
     private double latestWindSpeed = 0;
     private long lastWeatherUpdateTime = 0;
-    private static final double windThreshold = 3D;
+    private static final double windThreshold = 20D;
     private static final int weatherUpdateInterval = 360000;
-    private static final int micThreshold = 1000; //TODO: Find better value
+    private static final int micThreshold = 7000;
 
     private long lastUpdate = 0;
 
@@ -156,6 +155,12 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
         return START_NOT_STICKY;
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        throw new UnsupportedOperationException();
+    }
+
     public ClassifyService() {
     }
 
@@ -244,17 +249,14 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                     values[13] = meanGps;
                     values[14] = medianGps;
                     Instance instance = new Instance(1.0, values);
-                    //instance.setClassValue(instance.numAttributes()-1);
 
                     Instances dataUnlabeled = new Instances("TestInstances", atts, 0);
                     dataUnlabeled.add(instance);
                     dataUnlabeled.setClassIndex(dataUnlabeled.numAttributes() - 1);
-                    //double classif = ibk.classifyInstance(dataUnlabeled.firstInstance());
                     try {
-                        //double value = classifier.classifyInstance(instance);
                         double value = classifier.classifyInstance(dataUnlabeled.firstInstance());
                         String className = dataUnlabeled.classAttribute().value((int) value);
-                        setVolume(className, meanMic);
+                        setVolume(className, medianMic);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -297,17 +299,14 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                     values[13] = meanGps;
                     values[14] = medianGps;
                     Instance instance = new Instance(1.0, values);
-                    //instance.setClassValue(instance.numAttributes()-1);
 
                     Instances dataUnlabeled = new Instances("TestInstances", atts, 0);
                     dataUnlabeled.add(instance);
                     dataUnlabeled.setClassIndex(dataUnlabeled.numAttributes() - 1);
-                    //double classif = ibk.classifyInstance(dataUnlabeled.firstInstance());
                     try {
-                        //double value = classifier.classifyInstance(instance);
                         double value = classifier.classifyInstance(dataUnlabeled.firstInstance());
                         String className = dataUnlabeled.classAttribute().value((int)value);
-                        setVolume(className, meanMic);
+                        setVolume(className, medianMic);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -364,15 +363,7 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 
     @Override
     public void onLocationChanged(Location location) { }
@@ -391,40 +382,39 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
      * MainActivity.KEY_PREF_WALK_VOLUME
      * MainActivity.KEY_PREF_BIKE_VOLUME
      * MainActivity.KEY_PREF_BUS_VOLUME
-     * @param tm
-     * @return
+     * @param tm transport mode
+     * @return the set volume preference or 2 if non is defined
      */
     private int getVolumePreference(String tm) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPreferences.getInt(tm, 2);
     }
 
-    private void setVolume(String className, double meanMic) {
+    private void setVolume(String className, double medianMic) {
         String volumeKey;
-        boolean wind = false;
+        boolean isWindConsidered = false;
         if ("Walking".equals(className)) {
             volumeKey = MainActivity.KEY_PREF_WALK_VOLUME;
-            wind = true;
+            isWindConsidered = true;
         } else if ("Bus".equals(className)) {
             volumeKey = MainActivity.KEY_PREF_BUS_VOLUME;
         } else if ("Biking".equals(className)) {
             volumeKey = MainActivity.KEY_PREF_BIKE_VOLUME;
-            wind = true;
+            isWindConsidered = true;
         } else {
             return;
         }
         int volume = getVolumePreference(volumeKey);
 
-        // TODO: use mic and wind
-        if(latestWindSpeed > windThreshold) {
-            volume++;
+        if(isWindConsidered && latestWindSpeed > windThreshold) {
+            volume = volume + 2;
+        } else if (isWindConsidered && latestWindSpeed > windThreshold/2) {
+            volume = volume + 1;
         }
-        if (meanMic > micThreshold) {
-            volume++;
-        }
-        if (latestWindSpeed < windThreshold && latestWindSpeed > windThreshold/2
-                && meanMic < micThreshold && meanMic > micThreshold/2) {
-            volume++;
+        if (medianMic > micThreshold) {
+            volume = volume + 2;
+        } else if (medianMic > micThreshold/2) {
+            volume = volume + 1;
         }
 
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
