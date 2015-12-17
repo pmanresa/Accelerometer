@@ -101,6 +101,14 @@ public class SensorService extends Service implements SensorEventListener, Locat
             atts.addElement(new Attribute("speedMean"));
             atts.addElement(new Attribute("speedMedian"));
 
+            FastVector classVector = new FastVector(3);
+            classVector.addElement("Walking");
+            classVector.addElement("Bus");
+            classVector.addElement("Biking");
+            Attribute ClassAttribute = new Attribute("theClass", classVector);
+
+            atts.addElement(ClassAttribute);
+
             data = new Instances("MyRelation", atts, 0);
 
             Notification notification = new NotificationCompat.Builder(this)
@@ -182,7 +190,12 @@ public class SensorService extends Service implements SensorEventListener, Locat
             if(w1 < 64 && w2 == 0) {
                 window1acc[w1] = vector;
                 window1mic[w1] = (double) mediaRecorder.getMaxAmplitude();
-                window1gps[w1] = (double) locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getSpeed();
+                double speed = 0D;
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    speed = location.getSpeed();
+                }
+                window1gps[w1] = speed;
                 w1++;
             }
             else {
@@ -191,7 +204,11 @@ public class SensorService extends Service implements SensorEventListener, Locat
                 double maxAmplitude = (double) mediaRecorder.getMaxAmplitude();
                 window1mic[w1] = maxAmplitude;
                 window2mic[w2] = maxAmplitude;
-                double speed = (double) locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getSpeed();
+                double speed = 0D;
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    speed = location.getSpeed();
+                }
                 window1gps[w1] = speed;
                 window2gps[w2] = speed;
                 w1++;

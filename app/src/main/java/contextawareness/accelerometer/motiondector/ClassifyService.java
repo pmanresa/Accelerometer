@@ -98,7 +98,7 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
 
             try{
                 aM = this.getAssets();
-                ObjectInputStream ois = new ObjectInputStream(aM.open("classifier"));
+                ObjectInputStream ois = new ObjectInputStream(aM.open("classifier.model"));
                 classifier = (J48) ois.readObject();
                 ois.close();
             }
@@ -169,7 +169,12 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
             if(w1 < 64 && w2 == 0) {
                 window1acc[w1] = vector;
                 window1mic[w1] = (double) mediaRecorder.getMaxAmplitude();
-                window1gps[w1] = (double) locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getSpeed();
+                double speed = 0D;
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    speed = location.getSpeed();
+                }
+                window1gps[w1] = (double) speed;
                 w1++;
             }
             else {
@@ -178,7 +183,11 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                 double maxAmplitude = (double) mediaRecorder.getMaxAmplitude();
                 window1mic[w1] = maxAmplitude;
                 window2mic[w2] = maxAmplitude;
-                double speed = (double) locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getSpeed();
+                double speed = 0D;
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    speed = location.getSpeed();
+                }
                 window1gps[w1] = speed;
                 window2gps[w2] = speed;
                 w1++;
