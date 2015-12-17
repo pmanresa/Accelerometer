@@ -61,12 +61,12 @@ public class MainActivity extends Activity {
         int volume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         final int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-        final RadioButton headphoneView = (RadioButton) findViewById(R.id.headphoneDetectedView);
+        /*final RadioButton headphoneView = (RadioButton) findViewById(R.id.headphoneDetectedView);
         if (headsetOn == true) {
             headphoneView.toggle();
-        }
+        }*/
 
-        final SeekBar volumeBar = (SeekBar) findViewById(R.id.volumeSlider);
+        /*final SeekBar volumeBar = (SeekBar) findViewById(R.id.volumeSlider);
         volumeBar.setMax(maxVolume);
         volumeBar.setProgress(volume);
         volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
-        });
+        });*/
 
         SeekBar walkingBar = (SeekBar) findViewById(R.id.walkingVolumeSlider);
         SeekBar bikingBar = (SeekBar) findViewById(R.id.bikingVolumeSlider);
@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
         });
 
         // TODO: Remove, unused
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        /*IntentFilter intentFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -165,7 +165,7 @@ public class MainActivity extends Activity {
                     //TODO: Stop TMD classifier service
                 }
             }
-        };
+        };*/
         //registerReceiver(receiver, intentFilter);
 
         //Intent serviceIntent = new Intent(this, ClassifyService.class);

@@ -48,6 +48,12 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
     private MediaRecorder mediaRecorder;
     private LocationManager locationManager;
 
+    private double latestWindSpeed = 0;
+    private long lastWeatherUpdateTime = 0;
+    private static final double windThreshold = 3D;
+    private static final int weatherUpdateInterval = 360000;
+    private static final int micThreshold = 1000; //TODO: Find better value
+
     private long lastUpdate = 0;
 
     FastVector atts;
@@ -95,6 +101,7 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
 
             atts.addElement(ClassAttribute);
 
+            data = new Instances("MyRelation", atts, 0);
 
             try{
                 aM = this.getAssets();
@@ -133,6 +140,8 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                     .build();
             startForeground(40, notification);
 
+
+
             running = true;
 
         } else if (command == SERVICE_STOP && running) {
@@ -155,6 +164,12 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
         Sensor mySensor = event.sensor;
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastWeatherUpdateTime > weatherUpdateInterval) {
+                updateWindSpeedAsync();
+                lastWeatherUpdateTime = currentTime;
+            }
+
             float x = event.values[0]; //X axis
             float y = event.values[1]; //Y axis
             float z = event.values[2]; //Z axis
@@ -229,10 +244,16 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                     values[13] = meanGps;
                     values[14] = medianGps;
                     Instance instance = new Instance(1.0, values);
-                    instance.setClassValue(instance.numAttributes()-1);
+                    //instance.setClassValue(instance.numAttributes()-1);
+
+                    Instances dataUnlabeled = new Instances("TestInstances", atts, 0);
+                    dataUnlabeled.add(instance);
+                    dataUnlabeled.setClassIndex(dataUnlabeled.numAttributes() - 1);
+                    //double classif = ibk.classifyInstance(dataUnlabeled.firstInstance());
                     try {
-                        double value = classifier.classifyInstance(instance);
-                        String className = instance.classAttribute().value((int) value);
+                        //double value = classifier.classifyInstance(instance);
+                        double value = classifier.classifyInstance(dataUnlabeled.firstInstance());
+                        String className = dataUnlabeled.classAttribute().value((int) value);
                         setVolume(className, meanMic);
                     }
                     catch (Exception e) {
@@ -276,10 +297,16 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
                     values[13] = meanGps;
                     values[14] = medianGps;
                     Instance instance = new Instance(1.0, values);
-                    instance.setClassValue(instance.numAttributes()-1);
+                    //instance.setClassValue(instance.numAttributes()-1);
+
+                    Instances dataUnlabeled = new Instances("TestInstances", atts, 0);
+                    dataUnlabeled.add(instance);
+                    dataUnlabeled.setClassIndex(dataUnlabeled.numAttributes() - 1);
+                    //double classif = ibk.classifyInstance(dataUnlabeled.firstInstance());
                     try {
-                        double value = classifier.classifyInstance(instance);
-                        String className = instance.classAttribute().value((int)value);
+                        //double value = classifier.classifyInstance(instance);
+                        double value = classifier.classifyInstance(dataUnlabeled.firstInstance());
+                        String className = dataUnlabeled.classAttribute().value((int)value);
                         setVolume(className, meanMic);
                     }
                     catch (Exception e) {
@@ -387,10 +414,19 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
             return;
         }
         int volume = getVolumePreference(volumeKey);
+
         // TODO: use mic and wind
-        if(wind) {
-            // Take into account the wind
+        if(latestWindSpeed > windThreshold) {
+            volume++;
         }
+        if (meanMic > micThreshold) {
+            volume++;
+        }
+        if (latestWindSpeed < windThreshold && latestWindSpeed > windThreshold/2
+                && meanMic < micThreshold && meanMic > micThreshold/2) {
+            volume++;
+        }
+
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,volume,0);
 
@@ -398,6 +434,19 @@ public class ClassifyService extends Service implements SensorEventListener, Loc
         Intent newIntent = new Intent("tmd");
         newIntent.putExtra("tmd",className);
         LocalBroadcastManager.getInstance(this).sendBroadcast(newIntent);
+    }
+
+    private void updateWindSpeedAsync() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    latestWindSpeed = WeatherClient.getWindSpeed(location.getLatitude(), location.getLongitude());
+                }
+
+            }
+        }).start();
     }
 
 }

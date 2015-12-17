@@ -23,41 +23,10 @@
         android:paddingTop="75dp">
 
         <TextView
-            android:id="@+id/headphoneLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Headphones connected:"/>
-
-        <RadioButton
-            android:id="@+id/headphoneDetectedView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/headphoneLabel"
-            android:clickable="false"
-            android:checked="false"/>
-
-        <TextView
-            android:id="@+id/volumeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_below="@id/headphoneDetectedView"
-            android:text="Media volume:"/>
-
-        <SeekBar
-            android:id="@+id/volumeSlider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_below="@id/volumeLabel"/>
-
-        <TextView
             android:id="@+id/walkingVolumeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_below="@id/volumeSlider"
             android:text="Walking volume:"/>
 
         <SeekBar
